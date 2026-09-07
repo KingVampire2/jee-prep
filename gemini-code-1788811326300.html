@@ -206,6 +206,38 @@
       line-height: 1;
     }
 
+    /* Dual Counters: Today vs All-Time */
+    .dual-counter-tray {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .counter-chip {
+      background: rgba(8, 12, 20, 0.8);
+      border: 1px solid var(--carbon-border);
+      border-radius: 10px;
+      padding: 8px 10px;
+      text-align: center;
+    }
+
+    .counter-chip .val {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 800;
+      line-height: 1.1;
+    }
+
+    .counter-chip .lbl {
+      font-size: 0.62rem;
+      font-weight: 700;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-top: 2px;
+    }
+
     /* RPM Gauge Bar */
     .rpm-container {
       display: flex;
@@ -354,34 +386,67 @@
       border-radius: 6px;
     }
 
-    /* Car Wallpaper Indicator */
+    /* Actions Bar */
+    .action-btn-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .reset-tasks-btn {
+      background: rgba(255, 0, 85, 0.15);
+      border: 1px solid rgba(255, 0, 85, 0.4);
+      color: var(--neon-pink);
+      border-radius: 8px;
+      padding: 10px 8px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 800;
+      cursor: pointer;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      transition: all 0.2s;
+    }
+
+    .reset-tasks-btn:hover {
+      background: rgba(255, 0, 85, 0.3);
+      box-shadow: 0 0 14px rgba(255, 0, 85, 0.4);
+    }
+
+    .pitstop-btn {
+      background: rgba(0, 240, 255, 0.1);
+      border: 1px solid rgba(0, 240, 255, 0.35);
+      color: var(--neon-cyan);
+      border-radius: 8px;
+      padding: 10px 8px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 800;
+      cursor: pointer;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      transition: all 0.2s;
+    }
+
+    .pitstop-btn:hover {
+      background: rgba(0, 240, 255, 0.25);
+      box-shadow: 0 0 14px rgba(0, 240, 255, 0.4);
+    }
+
     .wallpaper-badge {
       display: flex;
       align-items: center;
       justify-content: space-between;
       font-size: 0.72rem;
       color: var(--text-dim);
-      padding: 6px 12px;
+      padding: 8px 12px;
       background: rgba(0,0,0,0.5);
       border-radius: 8px;
       border: 1px solid var(--carbon-border);
-      margin-top: 6px;
-    }
-
-    .pitstop-btn {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--carbon-border);
-      color: var(--text-dim);
-      border-radius: 8px;
-      padding: 8px;
-      font-family: 'Orbitron', sans-serif;
-      font-size: 0.75rem;
-      font-weight: 700;
-      cursor: pointer;
-      width: 100%;
-      text-align: center;
-      text-transform: uppercase;
-      margin-top: 8px;
+      margin-top: 10px;
     }
 
     /* Turbo Notification */
@@ -436,7 +501,7 @@
           <span id="speedVal">0</span>
           <span class="speed-unit">KM/H</span>
         </div>
-        <div class="speed-label">Velocity (Questions Solved)</div>
+        <div class="speed-label">Current Velocity Index</div>
       </div>
 
       <div class="gear-box">
@@ -445,10 +510,22 @@
       </div>
     </div>
 
+    <!-- DUAL ODOMETERS: TODAY VS ALL DAYS -->
+    <div class="dual-counter-tray">
+      <div class="counter-chip">
+        <div class="val" id="todayQuestionsVal" style="color: var(--neon-cyan);">0</div>
+        <div class="lbl">Today's Solved</div>
+      </div>
+      <div class="counter-chip">
+        <div class="val" id="allTimeQuestionsVal" style="color: var(--neon-green);">0</div>
+        <div class="lbl">All Days Lifetime Total</div>
+      </div>
+    </div>
+
     <!-- RPM BOOST GAUGE -->
     <div class="rpm-container">
       <div class="rpm-info">
-        <span>Daily Target RPM (50 Qs)</span>
+        <span>Today's Target RPM (50 Qs)</span>
         <span id="rpmText" style="color: var(--neon-cyan); font-family: 'JetBrains Mono';">0%</span>
       </div>
       <div class="rpm-bar-track">
@@ -461,7 +538,7 @@
   <div class="carbon-card">
     <div class="card-heading">
       <span>🕹️ Cockpit Accelerators</span>
-      <span style="font-size: 0.75rem; color: var(--neon-cyan);" id="totalQuestionsSolved">0 Solved</span>
+      <span style="font-size: 0.72rem; color: var(--neon-yellow);">LIFETIME ODOMETER ACTIVE</span>
     </div>
 
     <div class="pedal-grid">
@@ -521,20 +598,26 @@
       <span class="nitro-pill">+30 KM/H</span>
     </div>
 
+    <!-- ACTION BUTTONS: DEDICATED DAILY RESET & PITSTOP -->
+    <div class="action-btn-row">
+      <button class="reset-tasks-btn" onclick="resetDailyTasks()">
+        🔄 Reset Daily Tasks
+      </button>
+      <button class="pitstop-btn" onclick="resetDayRPM()">
+        ⚡ Reset Today's RPM
+      </button>
+    </div>
+
     <div class="wallpaper-badge">
       <span>🏎️ Wallpaper Machine</span>
       <span id="currentCarName" style="color: var(--neon-cyan); font-weight: 700;">Porsche 911 GT3 RS</span>
     </div>
-
-    <button class="pitstop-btn" onclick="pitStopReset()">
-      🔧 Pit Stop (Start Fresh Daily Session)
-    </button>
   </div>
 
 </div>
 
 <script>
-  // 1. 4K SUPERCAR ROTATION ENGINE (Changes every 60 seconds)
+  // 1. 4K SUPERCAR ROTATION ENGINE (Rotates every 60 seconds)
   const supercarWallpapers = [
     { name: "Porsche 911 GT3 RS", url: "https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?q=80&w=3840&auto=format&fit=crop" },
     { name: "McLaren P1 / Senna GTR", url: "https://images.unsplash.com/photo-1621135802920-133df287f89c?q=80&w=3840&auto=format&fit=crop" },
@@ -552,11 +635,9 @@
     layer1.style.backgroundImage = `url('${supercarWallpapers[0].url}')`;
     document.getElementById('currentCarName').innerText = supercarWallpapers[0].name;
 
-    // Preload next image in cache
     const preloadImg = new Image();
     preloadImg.src = supercarWallpapers[1].url;
 
-    // Rotate every 60,000 milliseconds (1 minute)
     setInterval(rotateWallpaper, 60000);
   }
 
@@ -581,7 +662,6 @@
 
     document.getElementById('currentCarName').innerText = nextCar.name;
 
-    // Preload subsequent car
     const nextIndex = (currentCarIndex + 1) % supercarWallpapers.length;
     const preloadImg = new Image();
     preloadImg.src = supercarWallpapers[nextIndex].url;
@@ -629,9 +709,10 @@
     }
   };
 
-  // 3. RACING GAME ENGINE & HUD STATE
+  // 3. PERSISTENT STATE MANAGEMENT (With Lifetime Counters)
   let speed = parseInt(localStorage.getItem('jee_speed')) || 0;
-  let questionsSolved = parseInt(localStorage.getItem('jee_q_solved')) || 0;
+  let todayQuestions = parseInt(localStorage.getItem('jee_today_q')) || 0;
+  let allTimeQuestions = parseInt(localStorage.getItem('jee_alltime_q')) || 0;
   let missionsDone = JSON.parse(localStorage.getItem('jee_race_missions')) || {};
 
   const vehicles = [
@@ -661,19 +742,27 @@
     document.getElementById('carClass').innerText = activeTier.name;
     document.getElementById('gearDisplay').innerText = activeTier.gear;
     document.getElementById('lapCounter').innerText = activeTier.lap;
-    document.getElementById('totalQuestionsSolved').innerText = `${questionsSolved} Solved`;
 
-    let rpmPct = Math.min(100, Math.round((questionsSolved / 50) * 100));
+    // Update both Today and Lifetime Displays
+    document.getElementById('todayQuestionsVal').innerText = todayQuestions;
+    document.getElementById('allTimeQuestionsVal').innerText = allTimeQuestions;
+
+    // Today's RPM calculation (Goal: 50 Qs = 100%)
+    let rpmPct = Math.min(100, Math.round((todayQuestions / 50) * 100));
     document.getElementById('rpmFill').style.width = `${rpmPct}%`;
-    document.getElementById('rpmText').innerText = `${rpmPct}% RPM`;
+    document.getElementById('rpmText').innerText = `${rpmPct}% RPM (${todayQuestions}/50)`;
 
+    // Save states
     localStorage.setItem('jee_speed', speed);
-    localStorage.setItem('jee_q_solved', questionsSolved);
+    localStorage.setItem('jee_today_q', todayQuestions);
+    localStorage.setItem('jee_alltime_q', allTimeQuestions);
   }
 
   function hitGas(qCount, speedGain) {
     speed += speedGain;
-    questionsSolved += qCount;
+    todayQuestions += qCount;
+    allTimeQuestions += qCount; // Accumulates forever
+
     if (speedGain > 100) {
       AudioEngine.playNitro();
       triggerPopup(`HYPER DRIVE! +${speedGain} KM/H (+${qCount} Qs)`);
@@ -710,12 +799,20 @@
     }
   }
 
-  function pitStopReset() {
-    if (confirm("Enter pit stop? Resets daily checkpoints, but your KM/H top speed stays!")) {
-      missionsDone = {};
-      localStorage.removeItem('jee_race_missions');
-      document.querySelectorAll('.mission-row').forEach(m => m.classList.remove('done'));
+  // Feature 1: Reset Daily Tasks Checkmarks
+  function resetDailyTasks() {
+    missionsDone = {};
+    localStorage.removeItem('jee_race_missions');
+    document.querySelectorAll('.mission-row').forEach(m => m.classList.remove('done'));
+    triggerPopup("DAILY TASKS RESET!");
+  }
+
+  // Feature 2: Reset Today's RPM for a new day (keeps All-Time Lifetime questions safe)
+  function resetDayRPM() {
+    if (confirm("Reset today's problem gauge? Your All-Time Lifetime count will NOT be erased.")) {
+      todayQuestions = 0;
       updateHUD();
+      triggerPopup("TODAY'S RPM CLEARED!");
     }
   }
 
